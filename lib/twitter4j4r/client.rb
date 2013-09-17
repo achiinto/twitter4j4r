@@ -17,7 +17,7 @@ module Twitter4j4r
         config.access_token_secret  = auth_map[:access_secret]
       end
 
-      @stream = Java::Twitter4j::TwitterStreamFactory.new(config.build).instanceend
+      @stream = Java::Twitter4j::TwitterStreamFactory.new(config.build).instance
     end
 
     def on_exception(&block)
@@ -39,7 +39,7 @@ module Twitter4j4r
       add_listener(&block)
       @stream.filter(Java::Twitter4j::FilterQuery.new(0, nil, search_terms.to_java(:string)))
     end
-    
+
     def sample(&block)
       add_listener(&block)
       @stream.sample
@@ -48,6 +48,11 @@ module Twitter4j4r
     def add_listener(&block)
       on_status(&block)
       @stream.addListener(Listener.new(self, @status_block, @exception_block, @limitation_block, @deletion_block))
+    end
+
+    def user(&block)
+      add_listener(&block)
+      @stream.user
     end
 
     def stop
